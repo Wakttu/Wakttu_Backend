@@ -10,8 +10,8 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { SocketService } from './socket.service';
-import { Inject, UseGuards, forwardRef } from '@nestjs/common';
-import { SocketAuthenticatedGuard } from 'src/auth/socket-auth.guard';
+import { Inject, /*UseGuards*/ forwardRef } from '@nestjs/common';
+//import { SocketAuthenticatedGuard } from 'src/auth/socket-auth.guard';
 import { CreateRoomDto } from 'src/room/dto/create-room.dto';
 import { Room } from 'src/room/entities/room.entity';
 import { KungService } from 'src/kung/kung.service';
@@ -52,7 +52,7 @@ export class Game {
   quiz: Quiz[] | undefined; // 퀴즈 정보
 }
 
-@UseGuards(SocketAuthenticatedGuard)
+//@UseGuards(SocketAuthenticatedGuard)
 @WebSocketGateway({ namespace: 'wakttu', cors: { origin: '*' } })
 export class SocketGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
@@ -69,6 +69,30 @@ export class SocketGateway
 
   @WebSocketServer()
   public server: Server;
+
+  // tester
+  public tester = [
+    {
+      id: 'test1',
+      name: '테스터1',
+      roomId: null,
+    },
+    {
+      id: 'test2',
+      name: '르르땅',
+      roomId: null,
+    },
+    {
+      id: 'test3',
+      name: '부가땅',
+      roomId: null,
+    },
+    {
+      id: 'wakgood',
+      name: '우왁굳',
+      roomId: null,
+    },
+  ];
 
   // 서버에 연결된 사용자 정보
   public user: {
@@ -87,8 +111,8 @@ export class SocketGateway
 
   // 접속시 수행되는 코드
   handleConnection(@ConnectedSocket() client: any) {
-    if (!client.request.user) return;
-    this.user[client.id] = client.request.user;
+    const count = Object.keys(this.user).length;
+    this.user[client.id] = this.tester[count];
     this.server.emit('list', this.user);
   }
 
@@ -105,7 +129,7 @@ export class SocketGateway
 
   // 소켓연결이 끊어지면 속해있는 방에서 나가게 하는 코드
   async handleDisconnect(client: any) {
-    if (!client.request.user) return;
+    //if (!client.request.user) return;
     const roomId = this.user[client.id].roomId;
     if (roomId) {
       this.handleExitReady(roomId, client);
@@ -174,7 +198,6 @@ export class SocketGateway
     @MessageBody() data: CreateRoomDto,
     @ConnectedSocket() client: any,
   ) {
-    this.user[client.id] = client.request.user;
     const info = await this.socketService.createRoom(
       this.user[client.id].id,
       data,
