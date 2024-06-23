@@ -10,8 +10,8 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { SocketService } from './socket.service';
-import { Inject, UseGuards, forwardRef } from '@nestjs/common';
-import { SocketAuthenticatedGuard } from 'src/socket/socket-auth.guard';
+import { Inject, /*UseGuards,*/ forwardRef } from '@nestjs/common';
+//import { SocketAuthenticatedGuard } from 'src/socket/socket-auth.guard';
 import { CreateRoomDto } from 'src/room/dto/create-room.dto';
 import { Room } from 'src/room/entities/room.entity';
 import { KungService } from 'src/kung/kung.service';
@@ -112,14 +112,16 @@ export class SocketGateway
 
   // 접속시 수행되는 코드
   handleConnection(@ConnectedSocket() client: any) {
-    if (!client.request.user) return;
+    const count = Object.keys(this.user).length;
+    this.user[client.id] = this.tester[count];
+    /*if (!client.request.user) return;
     for (const key in this.user) {
       if (this.user[key].id === client.request.user.id) {
         client.disconnect();
         return;
       }
     }
-    this.user[client.id] = client.request.user;
+    this.user[client.id] = client.request.user;*/
     this.server.emit('list', this.user);
   }
 
