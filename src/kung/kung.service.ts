@@ -40,11 +40,20 @@ export class KungService {
     }
     const target = game.keyword['_id'];
     game.target = target[curRound];
+    game.chain = 1;
     this.server.to(roomId).emit('kung.round', game);
   }
 
   handleBan(roomId: string, index: number, keyword: string) {
     this.rules[roomId].ban[index] = keyword;
     this.server.to(roomId).emit('kung.ban', this.rules[roomId]);
+  }
+
+  handleNextTurn(game: Game, keyword: string, score: number) {
+    game.users[game.turn].score += score;
+    game.turn += 1;
+    game.turn %= game.total;
+    game.chain += 1;
+    game.target = keyword[keyword.length - 1];
   }
 }
