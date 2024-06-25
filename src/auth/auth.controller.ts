@@ -11,9 +11,10 @@ import { AuthService } from './auth.service';
 import { NaverAuthGuard } from './naver-auth.guard';
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { LocalGuard } from './local-auth.guard';
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { IsLoginedGuard } from './isLogined-auth.guard';
+import { WaktaAuthGuard } from './wakta-auth.guard';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -117,18 +118,7 @@ export class AuthController {
     return await this.authService.checkName(name);
   }
 
-  @ApiOperation({ summary: 'Local Login testing' })
-  @ApiBody({
-    schema: {
-      properties: {
-        email: { type: 'string' },
-        password: { type: 'string' },
-      },
-    },
-  })
-  @Post('test')
-  @UseGuards(LocalGuard)
-  async login(@Res() res: Response): Promise<any> {
-    res.redirect('/socket.html');
-  }
+  @Get('wakta')
+  @UseGuards(WaktaAuthGuard)
+  async waktaLogin(): Promise<any> {}
 }

@@ -4500,6 +4500,16 @@ passport-oauth2@1.x.x:
     uid2 "0.0.x"
     utils-merge "1.x.x"
 
+"passport-oauth2@https://github.com/iqeq1945/passport-oauth2.git":
+  version "1.8.0"
+  resolved "https://github.com/iqeq1945/passport-oauth2.git#cc88259c6b8c26d7485308ce62c588159c48d6e0"
+  dependencies:
+    base64url "3.x.x"
+    oauth "0.10.x"
+    passport-strategy "1.x.x"
+    uid2 "0.0.x"
+    utils-merge "1.x.x"
+
 passport-oauth@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/passport-oauth/-/passport-oauth-1.0.0.tgz"

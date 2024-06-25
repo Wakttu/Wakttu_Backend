@@ -1,4 +1,4 @@
-import { Controller, Get, Req } from '@nestjs/common';
+import { Controller, Get, Query, Req } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Request } from 'express';
 import { SocketService } from './socket/socket.service';
@@ -19,5 +19,10 @@ export class AppController {
   @Get('/test')
   getSession(@Req() req: Request): any {
     return req.session;
+  }
+
+  @Get('callback')
+  waktaCallback(@Query() query) {
+    return query;
   }
 }
