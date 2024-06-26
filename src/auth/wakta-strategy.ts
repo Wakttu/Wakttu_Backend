@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, VerifyCallback } from 'passport-oauth2';
 @Injectable()
-export class WaktaStrategy extends PassportStrategy(Strategy, 'wakta') {
+export class WaktaStrategy extends PassportStrategy(Strategy, 'oauth2') {
   constructor(private readonly configService: ConfigService) {
     super({
       authorizationURL: 'https://waktaverse.games/oauth/authorize',
@@ -11,12 +11,14 @@ export class WaktaStrategy extends PassportStrategy(Strategy, 'wakta') {
       clientID: configService.get('CLIENT_ID'),
       clientSecret: configService.get('CLIENT_SECRET'),
       callbackURL: configService.get('CALLBACK_URL'),
+      profileURL: 'https://waktaverse.games/api/game-link/user/profile',
       passReqToCallback: true,
       pkce: true,
-      store: true,
+      state: true,
     });
   }
   async validate(
+    request: any,
     accessToken: string,
     refreshToken: string,
     profile: any,
@@ -25,9 +27,10 @@ export class WaktaStrategy extends PassportStrategy(Strategy, 'wakta') {
     const user = {
       accessToken: accessToken,
       refreshToken: refreshToken,
-      profile: profile,
+      id: String(profile.id),
+      name: profile.name,
+      provider: 'waktaverse.games',
     };
-    console.log(user);
     return done(null, user);
   }
 }

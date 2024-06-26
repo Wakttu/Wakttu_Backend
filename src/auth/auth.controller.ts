@@ -6,6 +6,7 @@ import {
   Res,
   Post,
   Body,
+  Query,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { NaverAuthGuard } from './naver-auth.guard';
@@ -22,14 +23,14 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @ApiOperation({ summary: 'Oauth Naver Login' })
-  @Get('naver')
   @UseGuards(NaverAuthGuard)
   @UseGuards(IsLoginedGuard)
+  @Get('naver')
   async naverLogin(): Promise<void> {}
 
   @ApiOperation({ summary: 'Oauth Naver login Callback' })
-  @Get('naver/callback')
   @UseGuards(NaverAuthGuard)
+  @Get('naver/callback')
   async naverLoginCallback(@Req() req, @Res() res): Promise<void> {
     const user = req.user;
     await this.authService.OAuthLogin(user);
@@ -51,9 +52,9 @@ export class AuthController {
       },
     },
   })
-  @Post('login')
   @UseGuards(LocalGuard)
   @UseGuards(IsLoginedGuard)
+  @Post('login')
   async localLogin(@Req() req: Request): Promise<any> {
     const json = JSON.parse(JSON.stringify(req.user));
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -71,8 +72,8 @@ export class AuthController {
       },
     },
   })
-  @Post('signup')
   @UseGuards(IsLoginedGuard)
+  @Post('signup')
   async signup(@Body() user: CreateUserDto): Promise<any> {
     return await this.authService.signup(user);
   }
@@ -118,7 +119,20 @@ export class AuthController {
     return await this.authService.checkName(name);
   }
 
-  @Get('wakta')
   @UseGuards(WaktaAuthGuard)
+  @Get('wakta')
   async waktaLogin(): Promise<any> {}
+
+  @UseGuards(WaktaAuthGuard)
+  @Get('wakta/callback')
+  async waktaCallback(@Query() query, @Req() req: Request) {
+    const user = req.user;
+    const { accessToken, refreshToken } = user;
+
+    delete user['accessToken'];
+
+    console.log(user);
+    await this.authService.OAuthLogin(user);
+    return { accessToken: accessToken, refreshToken: refreshToken };
+  }
 }

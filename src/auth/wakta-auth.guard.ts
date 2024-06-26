@@ -2,7 +2,7 @@ import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
 @Injectable()
-export class WaktaAuthGuard extends AuthGuard('wakta') {
+export class WaktaAuthGuard extends AuthGuard('oauth2') {
   constructor() {
     super();
   }
